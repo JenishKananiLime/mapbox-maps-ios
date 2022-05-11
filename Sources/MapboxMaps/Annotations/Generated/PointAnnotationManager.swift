@@ -465,7 +465,7 @@ public class PointAnnotationManager: AnnotationManagerInternal {
         }
     }
 
-    internal func handleQueriedFeatureIds(_ queriedFeatureIds: [String]) {
+    internal func handleQueriedFeatureIds(_ queriedFeatureIds: [String], point: CGPoint) {
         // Find if any `queriedFeatureIds` match an annotation's `id`
         let tappedAnnotations = annotations.filter { queriedFeatureIds.contains($0.id) }
 
@@ -473,7 +473,7 @@ public class PointAnnotationManager: AnnotationManagerInternal {
         if !tappedAnnotations.isEmpty {
             delegate?.annotationManager(
                 self,
-                didDetectTappedAnnotations: tappedAnnotations)
+                didDetectTappedAnnotations: tappedAnnotations, point: point)
         }
     }
 }
