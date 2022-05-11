@@ -930,6 +930,39 @@ public final class Style: StyleProtocol {
         return styleManager.getStyleTerrainProperty(forProperty: property)
     }
 
+    // MARK: - Atmosphere
+    public func setAtmosphere(_ atmosphere: Atmosphere) throws {
+        guard let atmosphereDictionary = try atmosphere.toJSON() as? [String: Any] else {
+            throw TypeConversionError.unexpectedType
+        }
+
+        try setAtmosphere(properties: atmosphereDictionary)
+    }
+
+    public func removeAtmosphere() throws {
+        styleManager.setStyleAtmosphereForProperties(NSNull())
+    }
+
+    public func setAtmosphere(properties: [String: Any]) throws {
+        try handleExpected {
+            styleManager.setStyleAtmosphereForProperties(properties)
+        }
+    }
+
+    public func setAtmosphereProperty(_ property: String, value: Any) throws {
+        try handleExpected {
+            styleManager.setStyleAtmospherePropertyForProperty(property, value: value)
+        }
+    }
+
+    public func atmosphereProperty(_ property: String) -> Any {
+        return atmosphereProperty(property).value
+    }
+
+    public func atmosphereProperty(_ property: String) -> StylePropertyValue {
+        return styleManager.getStyleAtmosphereProperty(forProperty: property)
+    }
+
     // MARK: - Custom geometry
 
     /// Adds a custom geometry to be used in the style.
