@@ -203,7 +203,7 @@ public class AnnotationOrchestrator {
         let point = tap.location(in: tap.view)
         mapFeatureQueryable.queryRenderedFeatures(
             at: tap.location(in: tap.view),
-            options: options) { (result) in
+            options: nil) { (result) in
 
             switch result {
 
