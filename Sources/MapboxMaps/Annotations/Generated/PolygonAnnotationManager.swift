@@ -196,7 +196,7 @@ public class PolygonAnnotationManager: AnnotationManagerInternal {
         }
     }
 
-  internal func handleQueriedFeatureIds(_ queriedFeatureIds: [String], point: CGPoint) {
+  internal func handleQueriedFeatureIds(_ queriedFeatureIds: [String], point: CGPoint) -> Bool {
         // Find if any `queriedFeatureIds` match an annotation's `id`
         let tappedAnnotations = annotations.filter { queriedFeatureIds.contains($0.id) }
 
@@ -206,6 +206,8 @@ public class PolygonAnnotationManager: AnnotationManagerInternal {
                 self,
                 didDetectTappedAnnotations: tappedAnnotations, point: point)
         }
+      
+        return !tappedAnnotations.isEmpty
     }
 }
 

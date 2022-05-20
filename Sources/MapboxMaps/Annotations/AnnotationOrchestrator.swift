@@ -30,7 +30,7 @@ internal protocol AnnotationManagerInternal: AnnotationManager {
 
     func destroy()
 
-    func handleQueriedFeatureIds(_ queriedFeatureIds: [String], point: CGPoint)
+    func handleQueriedFeatureIds(_ queriedFeatureIds: [String], point: CGPoint) -> Bool
 }
 
 /// A delegate that is called when a tap is detected on an annotation (or on several of them).
@@ -45,7 +45,12 @@ public protocol AnnotationInteractionDelegate: AnyObject {
 
 }
 
+public protocol QueryRenderTapDelegate: AnyObject {
+    func tapDelegate(features: [QueriedFeature])
+}
+
 public class AnnotationOrchestrator {
+    public weak var queryRenderTapDelegate: QueryRenderTapDelegate?
 
     private let gestureRecognizer: UIGestureRecognizer
 
@@ -195,6 +200,7 @@ public class AnnotationOrchestrator {
 
         let layerIds = managers.map { $0.layerId }
         let options = RenderedQueryOptions(layerIds: layerIds, filter: nil)
+        let point = tap.location(in: tap.view)
         mapFeatureQueryable.queryRenderedFeatures(
             at: tap.location(in: tap.view),
             options: options) { (result) in
@@ -211,9 +217,18 @@ public class AnnotationOrchestrator {
                     return featureId
                 }
 
+                var found = false
                 for manager in managers {
-                  manager.handleQueriedFeatureIds(queriedFeatureIds, point: point)
+                  let didHandle = manager.handleQueriedFeatureIds(queriedFeatureIds, point: point)
+                  if !found  {
+                    found = didHandle
+                  }
                 }
+
+                if !found {
+                    self.queryRenderTapDelegate?.tapDelegate(features: queriedFeatures)
+                }
+
             case .failure(let error):
                 Log.warning(forMessage: "Failed to query map for annotations due to error: \(error)",
                             category: "Annotations")
